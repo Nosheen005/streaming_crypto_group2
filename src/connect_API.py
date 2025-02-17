@@ -23,8 +23,5 @@ def get_latest_coin_data(symbol="ADA"):
     session.headers.update(headers)
     
     response = session.get(API_URL, params=parameters)
-    print(response.text)
-    #return json.loads(response.text)["data"][symbol]
-
-get_latest_coin_data()
+    return json.loads(response.text)["data"][symbol]
 

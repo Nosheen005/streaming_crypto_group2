@@ -4,7 +4,6 @@ from pprint import pprint
 from quixstreams import Application
 from connect_API import get_latest_coin_data
 
-
 def main():
        app = Application(broker_address="localhost:9092", consumer_group="crypto_group")
        coins_topic = app.topic(name = "crypto", value_serializer="json")
