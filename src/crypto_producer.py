@@ -18,6 +18,7 @@ def main():
                 print(
                     f"produce event with key = {kafka_message.key}, value = {coin_latest['quote']['USD']['price']}"
                 )
+
                 producer.produce(
                     topic=coins_topic.name, key=kafka_message.key, value=kafka_message.value
                 )

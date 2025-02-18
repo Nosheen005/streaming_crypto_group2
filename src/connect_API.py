@@ -7,6 +7,7 @@ def get_latest_coin_data(symbol="ADA"):
     API_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
     
     symbol = "ADA"
+
     
 
     parameters = {
@@ -27,3 +28,4 @@ def get_latest_coin_data(symbol="ADA"):
         return json.loads(response.text).get("data").get(symbol)
     except (ConnectionError, Timeout, TooManyRedirects) as e:
         print(e)
+    
