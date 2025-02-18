@@ -9,7 +9,7 @@ def main():
        coins_topic = app.topic(name = "crypto", value_serializer="json")
        with app.get_producer() as producer:
             while True:
-                coin_latest = get_latest_coin_data("BTC")
+                coin_latest = get_latest_coin_data()
 
                 kafka_message = coins_topic.serialize(
                     key=coin_latest["symbol"], value=coin_latest
