@@ -14,7 +14,8 @@ def extract_coin_data(message):
         "coin": message["name"],
         "price_usd": latest_quote["price"],
         "volume": latest_quote["volume_24h"],
-        "updated": message["last_updated"]
+        "updated": message["last_updated"],
+        "percent_change_1h": latest_quote["percent_change_1h"]
     }
 
 def create_postgres_sink():

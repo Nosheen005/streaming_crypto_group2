@@ -12,6 +12,8 @@ from streamlit_autorefresh import st_autorefresh
 from charts import line_chart
 import requests
 
+st.set_page_config(page_title="Kryptokollen", page_icon=":bar_chart", layout="wide")
+
 conection_string = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DBNAME}"
 
 engine = create_engine(conection_string)
@@ -24,17 +26,43 @@ def load_data(query):
     return df
 
 def layout():
-    df = load_data("SELECT * FROM crypto;")
-    st.markdown("# Kryptokollen")
-
-    st.dataframe(df.tail())
+    #st.set_page_config(page_title="Kryptokollen", page_icon=":bar_chart", layout="wide")
     
-    option = st.selectbox(
-        "Choose currency",
+    st.sidebar.title("Home")
+    st.title("Kryptokollen")
+    
+    crypto = st.sidebar.selectbox(
+    "Choose crypto",
+    ("ADA", "CAKE"),
+    )
+    st.sidebar.write("You selected:", crypto)
+
+    option = st.sidebar.selectbox(
+    "Choose currency",
     ("SEK", "NOK", "DKK", "EUR"),
     )
+
+    st.sidebar.write("You selected:", option)
+
+
+    df = load_data("SELECT * FROM crypto;")
     
+
+    st.dataframe(df.tail())
+
+    def format_large_number(value):
+        if value >= 1_000_000_000:
+            return f"{value / 1_000_000_000:.1f}B"
+        elif value >= 1_000_000:
+            return f"{value / 1_000_000:.1f}M"
+        elif value >= 1_000:
+            return f"{value / 1_000:.1f}K"
+        return f"{value:.2f}"
+    
+    price_usd = df["price_usd"]
+
     st.write("You selected:", option)
+
     
     EXCHANGE_RATE_API_URL = "https://api.exchangerate-api.com/v4/latest/USD" 
 
@@ -49,8 +77,8 @@ def layout():
                  "EUR": data["rates"]["EUR"]
         } 
         return rates
+    
     rates = get_exchange_rates()
-    price_usd = df["price_usd"]
     price = 0
 
     if option == "SEK":
@@ -66,7 +94,9 @@ def layout():
     
     price_chart = line_chart(x=df.index, y=price, title="Rates")
     
+    st.metric("Cardano",df["price_usd"].tail(1))
     st.pyplot(price_chart)
+
 
 if __name__ == "__main__":
     layout()
