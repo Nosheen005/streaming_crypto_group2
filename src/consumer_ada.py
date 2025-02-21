@@ -9,13 +9,15 @@ from constants import (
 from quixstreams.sinks.community.postgresql import PostgreSQLSink
 
 def extract_coin_data(message):
-    latest_quote = message["quote"]["USD"]
+    latest_quote = message["ADA"]["quote"]["USD"]
     return{
-        "coin": message["name"],
+        "coin": message["ADA"]["name"],
+        "symbol":message["ADA"]["symbol"],
         "price_usd": latest_quote["price"],
         "volume": latest_quote["volume_24h"],
-        "updated": message["last_updated"],
-        "percent_change_1h": latest_quote["percent_change_1h"]
+        "volume_change": latest_quote["volume_change_24h"],
+        "updated": message["ADA"]["last_updated"],
+        "percent_change_1h": latest_quote["percent_change_1h"],
     }
 
 def create_postgres_sink():
@@ -31,8 +33,8 @@ def create_postgres_sink():
     return sink
 
 def main():
-    app = Application(broker_address="localhost:9092", consumer_group="crypto_group", auto_offset_reset="earliest")
-    crypto_topic = app.topic(name="crypto", value_deserializer="json")
+    app = Application(broker_address="localhost:9092", consumer_group="crypto_group_ada", auto_offset_reset="earliest")
+    crypto_topic = app.topic(name="crypto_ada", value_deserializer="json")
     sdf = app.dataframe(topic=crypto_topic)
 
     sdf = sdf.apply(extract_coin_data)
