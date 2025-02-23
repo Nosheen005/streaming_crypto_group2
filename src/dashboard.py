@@ -43,10 +43,13 @@ def layout():
     st.sidebar.write("You selected:", option)
     with st.expander("See Dataframe"):
         def format_price(volume):
+            if volume >= 1000000000:
+                return f"{volume / 1000000000:.1f}B"
             if volume >= 1000000:
                 return f"{volume / 1000000:.1f}M"
             elif volume >= 1000:
                 return f"{volume / 1000:.1f}K"
+        
             return f"{volume:.2f}"
         
         query = f"SELECT * FROM crypto;"
@@ -73,9 +76,10 @@ def layout():
         previus_change = df["percent_change_1h"].tail(2).values[0]
         st.metric(label="Price change", value=f"{procent_change:.2f}%",delta=f"{previus_change:.2f}%" ,border=True)
         st.metric(label="Volume change", value=df["volume_change"].tail(1),delta=df["volume_change"].tail(2).values[0] ,border=True)
-        format_volume = format_price(df["volume"].tail(1).values[0])
+        convert_volume = round(df["volume"].tail(1).values[0] * rates[option])
+        format_volume = format_price(convert_volume)
         privius_volyme = format_price(df["volume"].tail(2).values[0])
-        st.metric(label="Volume", value=format_volume,delta=privius_volyme,border=True)
+        st.metric(label="Volume", value=f"{format_volume} {option}",delta=privius_volyme,border=True)
     with col[1]:
         st.pyplot(price_chart)
 
